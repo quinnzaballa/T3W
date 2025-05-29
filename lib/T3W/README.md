@@ -33,8 +33,23 @@ So it was created because i wanted to control DS1302 and create a driver by myse
 </br>
 
 ### ARRAY DATA CONF MAP
-|   NUM. OFFSET (Human Readable ~ Memory View( NUM ~ HEX ) )    |   NAME/PURPOSE    |   COMMENTS    |
+> Size is Unsigned 32bit
+
+</br>
+
+|   NUM. OFFSET ( Human Readable ~ Memory View( NUM ~ HEX ) )    |   NAME/PURPOSE    |   COMMENTS    |
 |---------------------------------------------------------------|-------------------|---------------|
 |       1       ~       0       ~       0x00                    |   DATA            |   Data holder what to write   |
 |       2       ~       1       ~       0x04                    |   ADDRESS         |   Similar to Data holder  |
-|       3       ~       2       ~       0x08                    |   CE
+|       3       ~       2       ~       0x08                    |   CE              |   Chip Select pin BANK CONF |
+|       4       ~       3       ~       0x0C                    |   IO              |   In & Out pin BANK CONF |
+|       5       ~       4       ~       0x10                    |   CLK             |   Clock pin BANK CONF |
+|       6       ~       5       ~       0x14                    |   PINB            |   GPIO BANK DIFF CONF |
+|       7       ~       6       ~       0x18                    |   CE MUX          |   CE : IO MUX BASE ADDR + OFFSET |
+|       8       ~       7       ~       0x1C                    |   IO MUX          |   IO : IO MUX BASE ADDR + OFFSET |
+|       9       ~       8       ~       0x20                    |   CLK MUX         |   CLK : IO MUX BASE ADDR + OFFSET |
+|      10       ~       9       ~       0x24                    |   CE CONFIG       |   CE : IO CONFIG BASE ADDR + OFFSET |
+|      11       ~      10       ~       0x28                    |   IO CONFIG       |   IO : IO CONFIG BASE ADDR + OFFSET |
+|      12       ~      11       ~       0x2C                    |   CLK CONFIG      |   CLK : IO CONFIG BASE ADDR + OFFSET |
+|      13       ~      12       ~       0x30                    |   B1              |   BANK 1 GPIO |
+|      14       ~      13       ~       0x34                    |   B2              |   BANK 2 GPIO |
