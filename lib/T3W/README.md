@@ -29,3 +29,12 @@ So it was created because i wanted to control DS1302 and create a driver by myse
 |  a8-9     |   RESERVED    |   N/A |
 |   a10     |   (A/C/C).3   |   Arithmetic, Compare, & Counter #3 Register used by the T3W driver |
 |  a11-15   |   UNUSED      |   Not used by the T3W driver  |
+
+</br>
+
+### ARRAY DATA CONF MAP
+|   NUM. OFFSET (Human Readable ~ Memory View( NUM ~ HEX ) )    |   NAME/PURPOSE    |   COMMENTS    |
+|---------------------------------------------------------------|-------------------|---------------|
+|       1       ~       0       ~       0x00                    |   DATA            |   Data holder what to write   |
+|       2       ~       1       ~       0x04                    |   ADDRESS         |   Similar to Data holder  |
+|       3       ~       2       ~       0x08                    |   CE
