@@ -1,4 +1,5 @@
 # T3W
-This project targets a 3-Wire communication for DS1302
 
-data test
+> This code is simply targeted for new bare-metal devs that wants to learn bit-banging
+
+This project targets a 3-Wire communication for DS1302
