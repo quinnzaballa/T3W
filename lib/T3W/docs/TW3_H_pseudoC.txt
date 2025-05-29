@@ -1,0 +1,24 @@
+TW3_CONFIG_INIT(CE, IO, CLK)
+
+store ce, io, clk to integer array.
+
+check if pin set was above 21 and below 26. if yes. infinite loop or halt
+
+use for loop then 'if' if it was set more than 31. then:
+pin < 31 = store shift
+pin > 31 = pin - 31 -> store shift
+T3W_REG_IOCONF_BO + ( 4 * pin )
+T3W_REG_IOMUX_BO + ( 4 * pin )
+
+Set the pin as output...
+Disable Pull-'up/down'
+Disable Open-drain
+
+exit and return
+
+T3W_INTR(bool type, uint32_t prevps)
+
+give it a global name. T3W_CINTR1 and T3W_CINTR0 <- Never Mind
+
+if type == 1 : Enable interrupt store previous ps on prevps
+    else     : Disable interrupt and write the value given by the prevps
