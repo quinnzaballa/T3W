@@ -93,7 +93,7 @@ void T3W_INTR(bool type, uint32_t &prevps) {
             : // No clobbers
         );
     }
-    
+
     return; // return to user
 }
 
@@ -199,7 +199,23 @@ void T3W_WRS(uint8_t address, uint8_t data) {
     T3W_CONF_ARR[1] = address;  // ^^^
     uint32_t prevps = 0;
     T3W_INTR(0, prevps);        // Disable INTR
-    T3W_SET_WPX_OD_0();
+    T3W_SET_WPX_OD_0();         // Disable Pull-'up/down' and Open-Drain
+
+    __asm__ volatile("" ::: "memory");  // Sync memory...
+
+    __asm__ volatile(
+        "movi a2, %[GPIOBA]\n"
+        "mov a7, %[DATARR]\n"
+        :
+        :   [GPIOBA] "i" (T3W_REG_GPIO_BA),
+            [DATARR] "r" (&T3W_CONF_ARR)
+        : "a2", "a7"
+    ); // <- Pre-load the addresses to registers.
+
+    __asm__ volatile(
+        "movi a10, 12\n"
+        T3W_ASM_CALL8
+    ); // <- Write address first.
 
 
 }
