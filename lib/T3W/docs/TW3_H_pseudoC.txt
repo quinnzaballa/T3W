@@ -16,9 +16,33 @@ Disable Open-drain
 
 exit and return
 
+//////////////////////////////////////////////////////////
+
 T3W_INTR(bool type, uint32_t prevps)
 
 give it a global name. T3W_CINTR1 and T3W_CINTR0 <- Never Mind
 
 if type == 1 : Enable interrupt store previous ps on prevps
     else     : Disable interrupt and write the value given by the prevps
+
+//////////////////////////////////////////////////////////
+
+T3W_WRS(...)
+    This will Write Single 16bit, data. (1 byte for address and 1 byte for data)
+
+Push data and address to DATA CONFIG
+
+disable INTR
+disable pull-'up/down' and open-drain (for double check yk)
+
+sync first.
+
+push address of the GPIO BA and DATA CONFIG to a2, and a7. correspondingly
+push GPIO BA and DATA CONFIG to stack for call window modularity.
+
+CE HIGH for 1uS
+
+call write 8bit function asm. and write to a3. to process. lsb-byte-0 is the address and lsb-byte-1 is data
+    i.e. 0x...1122 | 11 = data; 22 = address
+
+clean up DATA CONFIG data and address array. and deallocate allocated stack if any.

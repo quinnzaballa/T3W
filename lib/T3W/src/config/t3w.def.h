@@ -22,7 +22,6 @@
 // #define T3W_REG_IOMUX_BA    DR_REG_IO_MUX_BASE  // Base Address of IO MUX || [REMOVED : use T3W_REG_IOMUX_BO instead]
 // ##### END OF GPIO BASE ADDRESS CONFIGURATION #####
 
-
 // ##### GPIO OFFSET #####
 #define T3W_REG_IOCONF_BO   DR_REG_GPIO_BASE + 0x74     // IO CONFIGURATION; OFFSET
 #define T3W_REG_IOMUX_BO    DR_REG_IO_MUX_BASE + 0x04   // IO MUX; OFFSET
@@ -41,5 +40,10 @@
 #define T3W_IN_GPIO_REG     0x3C                // GPIO IN REGISTER : 1
 #define T3W_IN1_GPIO_REG    0x40                // GPIO IN REGISTER : 2
 // ##### END OF GPIO OFFSET #####
+
+// ##### STRINGIFICATOR #####
+#define HIDDEN_T3W_EXPD_NTSR_HELPER(x) #x
+#define T3W_EXPD_NSTR(x) HIDDEN_T3W_EXPD_NTSR_HELPER(x) "\n"
+// ##### END OF STRINGIFICATOR #####
 
 #endif // <- CONFIG_IDF_TARGET_ESP32S3

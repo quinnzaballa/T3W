@@ -165,19 +165,19 @@ void T3W_CONFIG_INIT(int CE, int IO, int CLK) {
     } // <- Configure data required.
 
     __asm__ volatile(
-        "mov a7, %[ARR_DAT]\n"     // DATA ARRAY ADDRESS from 0
-        "movi a2, %[GPIOBA]\n"      // GPIO BASE ADDR
+        "mov a7, %[ARR_DAT]\n"          // DATA ARRAY ADDRESS from 0
+        "movi a2, %[GPIOBA]\n"          // GPIO BASE ADDR
         
-        "l32i a5, a7, ( 4 * 5 )\n"  // Load PINB data from DATA ARR
+        "l32i a5, a7," T3W_ARR_PINB     // Load PINB data from DATA ARR
         
-        "beqz a5, BANK1\n"          // Check PINB if zero. This will there theres no gpio set above 31
+        "beqz a5, BANK1\n"              // Check PINB if zero. This will there theres no gpio set above 31
 
-        "l32i a5, a7, ( 4 * 13 )\n" // Get the Value from 13th data from DATA ARR; BANK 2
-        "s32i a5, a2, %[ENGPIO1]\n" // ENABLE1 GPIO OFFSET
+        "l32i a5, a7," T3W_ARR_BANK2    // Get the Value from 13th data from DATA ARR; BANK 2
+        "s32i a5, a2, %[ENGPIO1]\n"     // ENABLE1 GPIO OFFSET
 
         "BANK1:\n"
-        "l32i a5, a7, ( 4 * 12 )\n" // Get the Value from 12th data from DATA ARR; BANK 1
-        "s32i a5, a2, %[ENGPIO]"    // ENABLE GPIO OFFSET
+        "l32i a5, a7," T3W_ARR_BANK1    // Get the Value from 12th data from DATA ARR; BANK 1
+        "s32i a5, a2, %[ENGPIO]"        // ENABLE GPIO OFFSET
         // END OF ASM CODE
 
         : // No output
@@ -204,8 +204,11 @@ void T3W_WRS(uint8_t address, uint8_t data) {
     __asm__ volatile("" ::: "memory");  // Sync memory...
 
     __asm__ volatile(
+        "addi a1, a1, -8\n"     // Allocate 8 bytes or 2x 32bit data
         "movi a2, %[GPIOBA]\n"
         "mov a7, %[DATARR]\n"
+        // "s32i a2, a1, 0\n"      // Store GPIO BASE ADDRESS to stack **| Remove.
+        // "s32i a2, a1, 4\n"      // Store DATA ARRAY CONF to stack
         :
         :   [GPIOBA] "i" (T3W_REG_GPIO_BA),
             [DATARR] "r" (&T3W_CONF_ARR)
@@ -213,9 +216,20 @@ void T3W_WRS(uint8_t address, uint8_t data) {
     ); // <- Pre-load the addresses to registers.
 
     __asm__ volatile(
-        "movi a10, 12\n"
-        T3W_ASM_CALL8
-    ); // <- Write address first.
+        "l32i a5, a7," T3W_ARR_PINB  // Load the pin location in bit shift
+        "l32i a4, a7," T3W_ARR_CE    // Load the CE pin
 
+        "bbsi a3, 0x1, BANK2\n"     // Check if CE is stored to bank 2
 
+        // BANK 1
+        "s32i a4, a2," T3W_EXPD_NSTR(T3W_OUT_W1TS_REG)
+        "j EOC\n"
+
+        "BANK2:\n"
+        "s32i a4, a2," T3W_EXPD_NSTR(T3W_OUT1_W1TS_REG)
+        "nop\n"
+        "EOC:"
+    ); // <- Put CE high
+
+    return;
 }
