@@ -19,23 +19,38 @@
 /**
  * @brief Enable and Disable Interrupt
  * 
- * @note prevps MUST HAVE A VALUE that is the last value of ps. not following this will cause unexpected
- *  cpu behaviour.
+ * @note when re-enabling the INTR. prevps MUST HAVE A VALUE that is the last value of ps.
+ *   not following this will cause unexpected cpu behaviour.
  * 
  * @param type 0 = Disable INTR, 1 = Enable INTR
  * @param prevps Where to store and write previous PS data reg
  */
 void T3W_INTR(bool type, uint32_t &prevps);
 /**
+ * @brief Disable open-drain and pull-'up/down'
+ */
+void T3W_SET_WPX_OD_0();
+/**
  * @brief Initializes the pins and initialize T3W_CONF_ARR
+ * 
+ * @note on ESP32-S3 You cannot set above and below 21 and 26. Refer to the esp32 s3 manual.
  * 
  * @param CE Chip Select pin
  * @param IO Data pin
  * @param CLK Clock pin
  * 
- * @note on ESP32-S3 You cannot set above and below 21 and 26. Refer to the esp32 s3 manual.
  */
 void T3W_CONFIG_INIT(int CE, int IO, int CLK); // T3W Configurator.
+/**
+ * @brief This function is used to write 2bytes on target chip. ( 1bytes for address & 1bytes for data )
+ * 
+ * @note This function is critical. meaning it links to the DATA CONFIG, If it wasnt initialized. it may cause
+ *  unexpected results.
+ * 
+ * @param address address to write to the chip
+ * @param data data to write to the chip 
+ */
+void T3W_WRS(uint8_t address, uint8_t data);
 
 // ##### ARRAY DATA CONFIG ##### //
 
@@ -78,7 +93,42 @@ void T3W_INTR(bool type, uint32_t &prevps) {
             : // No clobbers
         );
     }
+    
     return; // return to user
+}
+
+void T3W_SET_WPX_OD_0() {
+    for ( int i = 0; i < 3; i++ ) {
+        __asm__ volatile(
+            "mov a2, %[IOMUXA]\n"       // Load the ADDRESS of IO MUX PIN ADDR
+            "movi a3, 0xFFFFFE7F\n"     // Mov immediate value to disable Pull-'up/down'
+
+            "l32i a5, a2, 0\n"          // Get the current state of IO MUX register pin
+
+            "and a3, a3, a5\n"          // Bitwise and the values, technically masking everything except for the WPD/WPU
+
+            "s32i a3, a2, 0"            // Store the value back to the IO MUX register pin
+            :
+            :   [IOMUXA] "r" (T3W_CONF_ARR[ 6 + i ])
+            :   "a2", "a3", "a5"
+        ); // <- Set Pull-'up/down' to disable
+
+        __asm__ volatile(
+            "mov a2, %[IOCONFA]\n"      // Load the ADDRESS of IO CONF pin ADDR
+            "movi a3, 0xFFFFFFFB\n"     // Mov immediate value to disable open-drain
+
+            "l32i a5, a2, 0\n"          // Get the current state of IO CONF register pin
+
+            "and a3, a3, a5\n"          // Bitwise and the values, technically masking everything except for the WPD/WPU
+
+            "s32i a3, a2, 0"            // Store the value back to the IO CONF register pin
+            :
+            :   [IOCONFA] "r" (T3W_CONF_ARR[ 9 + i ])
+            :   "a2", "a3", "a5"
+        ); // <- Disable Open Drain
+    }
+
+    return;
 }
 
 void T3W_CONFIG_INIT(int CE, int IO, int CLK) {
@@ -138,36 +188,18 @@ void T3W_CONFIG_INIT(int CE, int IO, int CLK) {
         :   "a2", "a5", "a7"
     ); // <- Put pin set as OUTPUT
 
-    for ( int i = 0; i < 3; i++ ) {
-        __asm__ volatile(
-            "mov a2, %[IOMUXA]\n"   // Load the ADDRESS of IO MUX PIN ADDR
-            "movi a3, 0x180\n"       // Mov immediate value to disable Pull-'up/down'
-
-            "l32i a5, a2, 0\n"      // Get the current state of IO MUX register pin
-
-            "or a3, a3, a5\n"       // Bitwise Or the values
-
-            "s32i a3, a2, 0"        // Store the value back to the IO MUX register pin
-            :
-            :   [IOMUXA] "r" (T3W_CONF_ARR[ 6 + i ])
-            :   "a2", "a3", "a5"
-        ); // <- Set Pull-'up/down' to disable
-
-        __asm__ volatile(
-            "mov a2, %[IOCONFA]\n"      // Load the ADDRESS of IO CONF pin ADDR
-            "movi a3, 0xFFFFFFFB\n"     // Mov immediate value to disable open-drain
-
-            "l32i a5, a2, 0\n"          // Get the current state of IO CONF register pin
-
-            "and a3, a3, a5\n"          // Bitwise and the values
-
-            "s32i a3, a2, 0"            // Store the value back to the IO CONF register pin
-            :
-            :   [IOCONFA] "r" (T3W_CONF_ARR[ 9 + i ])
-            :   "a2", "a3", "a5"
-        ); // <- Disable Open Drain
-    }
+    T3W_SET_WPX_OD_0();         // Disable Pull-'up/down' and Open-Drain
 
     T3W_INTR(1, prevps);
     return;
+}
+
+void T3W_WRS(uint8_t address, uint8_t data) {
+    T3W_CONF_ARR[0] = data;     // Store the data to write
+    T3W_CONF_ARR[1] = address;  // ^^^
+    uint32_t prevps = 0;
+    T3W_INTR(0, prevps);        // Disable INTR
+    T3W_SET_WPX_OD_0();
+
+
 }
