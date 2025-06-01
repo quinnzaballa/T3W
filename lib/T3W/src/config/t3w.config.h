@@ -1,3 +1,5 @@
+#pragma once
+
 /**
  * @file t3w.config.h
  * @brief This contains the T3W Configuration, Settings, etc.
