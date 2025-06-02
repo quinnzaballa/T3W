@@ -1,4 +1,4 @@
-#include "t3wasm.config.h"
+#include "config/t3wasm.config.h"
 
 .section .flash.text, "ax"
 .global T3W_TIMER_A2_CALL
@@ -13,3 +13,4 @@ _T3W_TIMER_A2_CALL:
     bnez a2, _T3W_TIMER_A2_CALL     // Jmp if not zero
     retw                            // Return window
 // ##### END OF TIMER T3W ##### //
+

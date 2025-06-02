@@ -47,4 +47,31 @@
 #define T3W_EXPD_NSTR(x) HIDDEN_T3W_EXPD_NTSR_HELPER(x)         // EXPAND AND STRING
 // ##### END OF STRINGIFICATOR #####
 
+// DATA ARRAY CONF IMM
+#define T3W_ARR_DATA        ( 4 * 0 )
+#define T3W_ARR_ADDR        ( 4 * 1 )
+#define T3W_ARR_CE          ( 4 * 2 )
+#define T3W_ARR_IO          ( 4 * 3 )
+#define T3W_ARR_CLK         ( 4 * 4 )
+#define T3W_ARR_PINB        ( 4 * 5 )
+#define T3W_ARR_CE_MUX      ( 4 * 6 )
+#define T3W_ARR_IO_MUX      ( 4 * 7 )
+#define T3W_ARR_CLK_MUX     ( 4 * 8 )
+#define T3W_ARR_CE_CONF     ( 4 * 9 )
+#define T3W_ARR_IO_CONF     ( 4 * 10 )
+#define T3W_ARR_CLK_CONF    ( 4 * 11 )
+#define T3W_ARR_BANK1       ( 4 * 12 )
+#define T3W_ARR_BANK2       ( 4 * 13 )
+
+// ##### ASM GLOBAL NAME (MACRO) #####
+#define T3W_ASM_TIMER_CALL8(x)  __asm__ volatile(                   \
+                                    "movi a10," T3W_EXPD_NSTRNL(x)  \
+                                    "call8 T3W_TIMER_A2_CALL"       \
+                                    :                               \
+                                    :                               \
+                                    :   "a10"                       \
+                                );
+
+
+
 #endif // <- CONFIG_IDF_TARGET_ESP32S3

@@ -11,3 +11,18 @@
  * @link https://github.com/quinnzaballa
  * @date 6-2-2025
  */
+
+/* INCLUDES */
+#include "config/t3w.def.h"
+#include "config/t3w.config.h"
+
+/* INTERNAL DEFINE */
+/**
+ * @cond
+ * 
+ * @brief This section contains local Define name for the T3W ASM.
+ *  I MUST KEEP the name Short as possible.. probably 7-8 chars.. 
+ */
+
+#define NOALLOC 0   // NO ALLOCATION
+#define ALLOC16 16  // ALLOCATE 16 BYTES
