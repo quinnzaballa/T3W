@@ -203,23 +203,22 @@ void T3W_WRS(uint8_t address, uint8_t data) {
     T3W_INTR(0, prevps);        // Disable INTR
     T3W_SET_WPX_OD_0();         // Disable Pull-'up/down' and Open-Drain
 
-    __asm__ volatile(
-        "call0 TEST"
-    );
+    T3W_ASM_TIMER_CALL8(6);     // Small delay
 
     __asm__ volatile("" ::: "memory");  // Sync memory...
-
+    
     __asm__ volatile(
         "addi a1, a1, -8\n"     // Allocate 8 bytes or 2x 32bit data | Useless
         "s32i %[GPIOBA], a1, 0\n"      // Store GPIO BASE ADDRESS to stack **| Remove.
         "s32i %[DATARR], a1, 4\n"      // Store DATA ARRAY CONF to stack
         :
         :   [GPIOBA] "r" (T3W_REG_GPIO_BA),
-            [DATARR] "r" (&T3W_CONF_ARR)
+        [DATARR] "r" (&T3W_CONF_ARR)
         : "a2", "a7"
     ); // <- Pre-load the addresses to registers.
+    
+    __asm__ volatile("" ::: "memory");  // Sync memory...
 
-    // 
 
     // Allocated stack : 8 bytes | 2x 32bit
     return;
