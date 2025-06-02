@@ -26,3 +26,4 @@
 
 #define NOALLOC 0   // NO ALLOCATION
 #define ALLOC16 16  // ALLOCATE 16 BYTES
+#define ALC16OS(x) 12 + ( 4 * x )   // Access stack after the allocated stack

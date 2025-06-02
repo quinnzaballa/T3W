@@ -20,7 +20,7 @@
 // ##### GPIO BASE ADDRESS CONFIGURATION #####
 #define T3W_REG_GPIO_BA     DR_REG_GPIO_BASE    // Base Address of GPIO
 // #define T3W_REG_IOMUX_BA    DR_REG_IO_MUX_BASE  // Base Address of IO MUX || [REMOVED : use T3W_REG_IOMUX_BO instead]
-// ##### END OF GPIO BASE ADDRESS CONFIGURATION #####
+// ----- END OF GPIO BASE ADDRESS CONFIGURATION -----
 
 // ##### GPIO OFFSET #####
 #define T3W_REG_IOCONF_BO   DR_REG_GPIO_BASE + 0x74     // IO CONFIGURATION; OFFSET
@@ -39,15 +39,15 @@
 #define T3W_EN1_W1TC_REG    0x34                // GPIO ENABLE WRITE 1 TO CLR : 2
 #define T3W_IN_GPIO_REG     0x3C                // GPIO IN REGISTER : 1
 #define T3W_IN1_GPIO_REG    0x40                // GPIO IN REGISTER : 2
-// ##### END OF GPIO OFFSET #####
+// ----- END OF GPIO OFFSET -----
 
 // ##### STRINGIFICATOR #####
 #define HIDDEN_T3W_EXPD_NTSR_HELPER(x) #x
 #define T3W_EXPD_NSTRNL(x) HIDDEN_T3W_EXPD_NTSR_HELPER(x) "\n"  // EXPAND AND STRING + NEWLINE "\n"
 #define T3W_EXPD_NSTR(x) HIDDEN_T3W_EXPD_NTSR_HELPER(x)         // EXPAND AND STRING
-// ##### END OF STRINGIFICATOR #####
+// ----- END OF STRINGIFICATOR -----
 
-// DATA ARRAY CONF IMM
+/* ##### DATA ARRAY CONF IMM ##### */
 #define T3W_ARR_DATA        ( 4 * 0 )
 #define T3W_ARR_ADDR        ( 4 * 1 )
 #define T3W_ARR_CE          ( 4 * 2 )
@@ -62,6 +62,11 @@
 #define T3W_ARR_CLK_CONF    ( 4 * 11 )
 #define T3W_ARR_BANK1       ( 4 * 12 )
 #define T3W_ARR_BANK2       ( 4 * 13 )
+/* ----- END OF DATA ARRAY CONF IMM ----- */
+
+// ##### MISCELLANEOUS DEFINITIONS ##### //
+
+// ----- END OF MISCELLANEOUS DEFINITIONS ----- //
 
 // ##### ASM GLOBAL NAME (MACRO) #####
 #define T3W_ASM_TIMER_CALL8(x)  __asm__ volatile(                   \
@@ -71,7 +76,6 @@
                                     :                               \
                                     :   "a10"                       \
                                 );
-
-
+#define T3W_CLOBBER_ALL __asm__ volatile("" ::: "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15");
 
 #endif // <- CONFIG_IDF_TARGET_ESP32S3
