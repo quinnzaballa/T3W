@@ -220,6 +220,7 @@ void T3W_WRS(uint8_t address, uint8_t data) {
     __asm__ volatile("" ::: "memory");  // Sync memory...
 
     
+
     T3W_CLOBBER_ALL     // Clobber all before exiting...
 
     /* Allocated stack : 8 bytes | 2x 32bit */

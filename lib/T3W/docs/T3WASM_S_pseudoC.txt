@@ -1,0 +1,21 @@
+
+# 4-byte aligned #
+T3W_TIMER_A2_CALL
+    ENTRY -> A1 | ALLOCATE : 0
+
+LOOP 1 -> Decrement a2 -> Branch back if not equal to zero <<--
+||
+retw
+
+# 4-byte aligned
+__PINB__ASM___
+    ENTRY -> A1 | ALLOCATE : 16
+    PUSH : A2, A7, A3
+    L32i A2 <- GPIO Base Address
+    L32i A7 <- DATA ARRAY CONFIG Base Address
+
+    L32i A3 <- PINB | OF = 0x14
+    WSR.BR <- A3
+    POP : A2, A7, A3
+    retw
+

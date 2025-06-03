@@ -1,7 +1,7 @@
 #include "config/t3wasm.config.h"
 
 .section .flash.text, "ax"
-.global T3W_TIMER_A2_CALL
+.global T3W_TIMER_A2_CALL, __PINB__ASM___
 .hidden CE_IO2
 
 // ##### TIMER T3W ##### //
@@ -14,13 +14,24 @@ _T3W_TIMER_A2_CALL:
     retw                            // Return window
 // ##### END OF TIMER T3W ##### //
 
+/* ##### LOAD PINB to Boolean Registers ( HIDDEN ) ##### */
 .align 4
-/* CHIP ENABLE CONTROL */
-T3W_CE_CONTROL:
-    entry a1, ALLOC16       // Allocate 16 byte.
+__PINB__ASM___:
+    entry a1, ALLOC16               // Entry but dont allocate anything
+
+    s32i a2, a1, 0                  // PUSH : A2, A3, A7
+    s32i a3, a1, 4                  // ^^^
+    s32i a7, a1, 8                  // ^^
     
-    s32i a5, a1, 0          // Store a5 to stack
-    l32i a5, a1, ALC16OS(0) // Get the Setting
-    
-    /* CE ENABLE SECTION */
-    
+    l32i a2, a1, ALC16OS(0)         // Load GPIO BA
+    l32i a7, a1, ALC16OS(1)         // Load DATA ARR CONFIG BA
+
+    l32i a3, a7, T3W_ARR_PINB       // Lad PINB
+    wsr.br a3                       // Store data to Boolean Regs
+
+    l32i a7, a1, 8                  // POP : A2, A3, A7
+    l32i a3, a1, 4                  // ^^^
+    l32i a2, a1, 0                  // ^^
+
+    retw
+/* ----- LOAD PINB to Boolean Registers ( HIDDEN ) ----- */
