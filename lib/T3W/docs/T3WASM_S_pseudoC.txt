@@ -1,5 +1,4 @@
-
-# 4-byte aligned #
+# 4-byte aligned
 T3W_TIMER_A2_CALL
     ENTRY -> A1 | ALLOCATE : 0
 
@@ -8,7 +7,7 @@ LOOP 1 -> Decrement a2 -> Branch back if not equal to zero <<--
 retw
 
 # 4-byte aligned
-__PINB__ASM___
+__T3W_PINB__ASM___
     ENTRY -> A1 | ALLOCATE : 16
     PUSH : A2, A7, A3
     L32i A2 <- GPIO Base Address
@@ -19,3 +18,22 @@ __PINB__ASM___
     POP : A2, A7, A3
     retw
 
+# MACRO
+# This has 2 Version. Pure ASM and ASM INLINE
+__T3W_CE_ENABLE__ASM__ & __T3W_CE_ENABLE__ASM_INLINE__
+    MOV A3 <- A2                            # COPY Base Address
+    BF B0 -/> CE_BANK                       # Branch if Boolean register 0 
+    ADDi A3 <- T3W_OUT1_W1TS_REG ( 0x14 )   # Add T3W_OUT1_W1TS_REG to the A2
+    CE_BANK:                                # Just dont add.. IF = CE.br = 0
+    L32i A4 <- T3W_ARR_CE                   # Load T3W CE PINBIT
+    S32i A4 -> A3                           # Store to the indirect address A3
+
+T3W_WRITE_SINGLE
+    L32i A2 <- GPIO Base Address
+    L32i A7 <- DATA ARRAY CONFIG Base Address
+
+    CALL12 __PINB__ASM___                   # Call PINB set to configure T3W write.
+
+    __T3W_CE_ENABLE__ASM__                  # MACRO __T3W_CE_ENABLE__ASM__
+
+    

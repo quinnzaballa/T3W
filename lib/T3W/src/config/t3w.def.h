@@ -11,6 +11,8 @@
  * @date 5-29-2025
  */
 
+// TODO CLEAN UP NAMES, COMMENTS, and CATEGORIES. Make it readable
+
 #include "sdkconfig.h"  // Definition Header
 #include "soc/soc.h"
 
@@ -67,15 +69,5 @@
 // ##### MISCELLANEOUS DEFINITIONS ##### //
 
 // ----- END OF MISCELLANEOUS DEFINITIONS ----- //
-
-// ##### ASM GLOBAL NAME (MACRO) #####
-#define T3W_ASM_TIMER_CALL8(x)  __asm__ volatile(                   \
-                                    "movi a10," T3W_EXPD_NSTRNL(x)  \
-                                    "call8 T3W_TIMER_A2_CALL"       \
-                                    :                               \
-                                    :                               \
-                                    :   "a10"                       \
-                                );
-#define T3W_CLOBBER_ALL __asm__ volatile("" ::: "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15");
 
 #endif // <- CONFIG_IDF_TARGET_ESP32S3
